@@ -1,11 +1,27 @@
 'use strict';
 
 const electron = require('electron');
+var http = require('http');
+
+
 // Module to control application life.
 const app = electron.app;
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow;
+const PORT=8080;
 
+
+function handleRequest(request, response){
+  response.end('It Works!! Path Hit: ' + request.url);
+}
+
+//Create a server
+var server = http.createServer(handleRequest);
+//Lets start our server
+server.listen(PORT, function(){
+  //Callback triggered when server is successfully listening. Hurray!
+  console.log("Server listening on: http://localhost:%s", PORT);
+});
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
@@ -13,6 +29,9 @@ let mainWindow;
 function createWindow () {
   // Create the browser window.
   mainWindow = new BrowserWindow({width: 1024, height: 768});
+  mainWindow.setProgressBar(0.5);
+  mainWindow.setRepresentedFilename('/Users/victor.caldentey/workspace/electron-quick-start');
+  mainWindow.setDocumentEdited(true);
 
   // and load the index.html of the app.
   mainWindow.loadURL('file://' + __dirname + '/index.html');
