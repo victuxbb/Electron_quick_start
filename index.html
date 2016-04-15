@@ -2,26 +2,18 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>CAMERA TEST!!</title>
+    <title>Awesome HTTP Chat!</title>
+    <link href="css/main.css" rel="stylesheet" />
   </head>
   <body>
-    <h1>Hello World!</h1>
-    <body onload="init();" style="background-color:#ababab;" >
-    <div style="width:352px; height:625px; margin:0 auto; background-color:#fff;" >
-      <div>
-        <video id="camFeed" width="320" height="240" autoplay>
+    <h1>Awesome HTTP Chat!</h1>
+    <body onload="init();">
+    <div id="canvas">
+      <div id="camera">
+        <video id="camFeed" width="160" height="120" autoplay>
         </video>
       </div>
 
-      <div>
-        <canvas id="photo" width="320" height="240">
-        </canvas>
-      </div>
-
-      <!-- <div style="margin:0 auto; width:82px;">
-         <input type="button" value="Take Photo" onclick="takePhoto();">
-       </div>
-     </div>-->
      <script>
        function init()
        {
@@ -44,21 +36,13 @@
        {
          alert('could not connect stream');
        }
-
-       function takePhoto()
-       {
-         var c = document.getElementById('photo');
-         var v = document.getElementById('camFeed');
-         c.getContext('2d').drawImage(v, 0, 0, 320, 240);
-       }
      </script>
 
-
-     <textarea id="chat" style="width: 500px; height: 550px;">
+     <textarea id="chat" style="width: 500px; height: 550px;" readonly>
      </textarea>
-      <input type="text" id="send_message" value="" style="width: 500px; height: 50px; "/>
+      <input type="text" id="send_message" value=""/>
      <input type="button" id="auth-button" value="TROLL!"/>
-
+    </div>
    </body>
    <script>
      var ipc = require('ipc');
@@ -76,4 +60,10 @@
          document.getElementById('chat').value+="Other: "+message.msg+"\n";
        });
      </script>
+    <script>
+      require('electron').ipcRenderer.on('online', function(event, message) {
+        console.log(message);  // Prints "whoooooooh!"
+        document.getElementById('chat').value+="Other: "+message.msg+"\n";
+      });
+    </script>
  </html>
