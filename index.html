@@ -53,5 +53,26 @@
       }
     </script>
 
+
+    <textarea id="chat" style="width: 500px; height: 550px;">
+    </textarea>
+    <input type="button" id="auth-button" value="TROLL!"/>
+
   </body>
+  <script>
+    var ipc = require('ipc');
+    var authButton = document.getElementById('auth-button');
+    authButton.addEventListener('click', function(){
+      ipc.send('invokeAction', 'TROLLING');
+      /*ipc.on('actionReply', function(response){ // would it be possible to use .once here? Does someone know?
+       processResponse(response);
+       })*/
+    });
+    </script>
+    <script>
+      require('electron').ipcRenderer.on('msg', function(event, message) {
+        console.log(message);  // Prints "whoooooooh!"
+        document.getElementById('chat').innerHTML+=message+"\n";
+      });
+    </script>
 </html>

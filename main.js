@@ -2,6 +2,10 @@
 
 const electron = require('electron');
 var http = require('http');
+var ipc = require('ipc');
+var request = require('superagent');
+var dispatcher = require('httpdispatcher');
+
 
 
 // Module to control application life.
@@ -12,8 +16,27 @@ const PORT=8080;
 
 
 function handleRequest(request, response){
-  response.end('It Works!! Path Hit: ' + request.url);
+  try {
+    //log the request on console
+    console.log(request.url);
+    //Disptach
+    dispatcher.dispatch(request, response);
+  } catch(err) {
+    console.log(err);
+  }
+
 }
+
+//For all your static (js/css/images/etc.) set the directory name (relative path).
+dispatcher.setStatic('resources');
+
+//A sample POST request
+dispatcher.onPost("/", function(req, res) {
+  mainWindow.webContents.send('msg',req.body);
+  res.end('Ok');
+
+});
+
 
 //Create a server
 var server = http.createServer(handleRequest);
@@ -29,15 +52,12 @@ let mainWindow;
 function createWindow () {
   // Create the browser window.
   mainWindow = new BrowserWindow({width: 1024, height: 768});
-  mainWindow.setProgressBar(0.5);
-  mainWindow.setRepresentedFilename('/Users/victor.caldentey/workspace/electron-quick-start');
-  mainWindow.setDocumentEdited(true);
 
   // and load the index.html of the app.
   mainWindow.loadURL('file://' + __dirname + '/index.html');
 
   // Open the DevTools.
-  //mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function() {
@@ -67,4 +87,15 @@ app.on('activate', function () {
   if (mainWindow === null) {
     createWindow();
   }
+});
+
+
+ipc.on('invokeAction', function(event, data){
+  request
+      .post('http://172.30.15.99:8080')
+      .send({ msg: data })
+      .set('Accept', 'application/json')
+      .end(function(err, res){
+        console.log(res.text);
+      });
 });

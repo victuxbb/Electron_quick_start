@@ -26,5 +26,9 @@
   "devDependencies": {
     "electron-packager": "^6.0.2",
     "electron-prebuilt": "^0.37.0"
+  },
+  "dependencies": {
+    "httpdispatcher": "^1.0.0",
+    "superagent": "1.7.2"
   }
 }
