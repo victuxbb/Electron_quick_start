@@ -18,61 +18,61 @@
         </canvas>
       </div>
 
-      <div style="margin:0 auto; width:82px;">
-        <input type="button" value="Take Photo" onclick="takePhoto();">
-      </div>
-    </div>
-    <script>
-      function init()
-      {
-        if(navigator.webkitGetUserMedia)
-        {
-          navigator.webkitGetUserMedia({video:true}, onSuccess, onFail);
-        }
-        else
-        {
-          alert('webRTC not available');
-        }
-      }
+      <!-- <div style="margin:0 auto; width:82px;">
+         <input type="button" value="Take Photo" onclick="takePhoto();">
+       </div>
+     </div>-->
+     <script>
+       function init()
+       {
+         if(navigator.webkitGetUserMedia)
+         {
+           navigator.webkitGetUserMedia({video:true}, onSuccess, onFail);
+         }
+         else
+         {
+           alert('webRTC not available');
+         }
+       }
 
-      function onSuccess(stream)
-      {
-        document.getElementById('camFeed').src = webkitURL.createObjectURL(stream);
-      }
+       function onSuccess(stream)
+       {
+         document.getElementById('camFeed').src = webkitURL.createObjectURL(stream);
+       }
 
-      function onFail()
-      {
-        alert('could not connect stream');
-      }
+       function onFail()
+       {
+         alert('could not connect stream');
+       }
 
-      function takePhoto()
-      {
-        var c = document.getElementById('photo');
-        var v = document.getElementById('camFeed');
-        c.getContext('2d').drawImage(v, 0, 0, 320, 240);
-      }
-    </script>
+       function takePhoto()
+       {
+         var c = document.getElementById('photo');
+         var v = document.getElementById('camFeed');
+         c.getContext('2d').drawImage(v, 0, 0, 320, 240);
+       }
+     </script>
 
 
-    <textarea id="chat" style="width: 500px; height: 550px;">
-    </textarea>
-    <input type="button" id="auth-button" value="TROLL!"/>
+     <textarea id="chat" style="width: 500px; height: 550px;">
+     </textarea>
+      <input type="text" id="send_message" value="" style="width: 500px; height: 100px; "/>
+     <input type="button" id="auth-button" value="TROLL!"/>
 
-  </body>
-  <script>
-    var ipc = require('ipc');
-    var authButton = document.getElementById('auth-button');
-    authButton.addEventListener('click', function(){
-      ipc.send('invokeAction', 'TROLLING');
-      /*ipc.on('actionReply', function(response){ // would it be possible to use .once here? Does someone know?
-       processResponse(response);
-       })*/
-    });
-    </script>
-    <script>
-      require('electron').ipcRenderer.on('msg', function(event, message) {
-        console.log(message);  // Prints "whoooooooh!"
-        document.getElementById('chat').innerHTML+=message+"\n";
-      });
-    </script>
-</html>
+   </body>
+   <script>
+     var ipc = require('ipc');
+     var authButton = document.getElementById('auth-button');
+     authButton.addEventListener('click', function(){
+       var message = document.getElementById("send_message").value;
+       ipc.send('invokeAction', message);
+       document.getElementById("send_message").value='';
+     });
+     </script>
+     <script>
+       require('electron').ipcRenderer.on('msg', function(event, message) {
+         console.log(message);  // Prints "whoooooooh!"
+         document.getElementById('chat').value+=message+"\n";
+       });
+     </script>
+ </html>
