@@ -5,14 +5,26 @@ var http = require('http');
 var ipc = require('ipc');
 var request = require('superagent');
 var dispatcher = require('httpdispatcher');
+var net    = require('net'), Socket = net.Socket;
 
-
+var clients = [];
 
 // Module to control application life.
 const app = electron.app;
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow;
-const PORT=8080;
+const PORT_SERVER=6666;
+
+var LAN = '172.30.15'; //Local area network to scan (this is rough)
+
+//scan over a range of IP addresses and execute a function each time the LLRP port is shown to be open.
+for(var i=90; i <=100; i++){
+  request
+      .get(LAN+'.'+i+PORT_SERVER+'/healthcheck')
+      .end(function(err, res){
+        console.log(res);
+      });
+}
 
 
 function handleRequest(request, response){
@@ -37,13 +49,18 @@ dispatcher.onPost("/", function(req, res) {
 
 });
 
+dispatcher.onGet("/healthcheck", function(req, res) {
+  res.writeHead(200, {'Content-Type': 'text/plain'});
+  res.end('live!');
+});
+
 
 //Create a server
 var server = http.createServer(handleRequest);
 //Lets start our server
-server.listen(PORT, function(){
+server.listen(PORT_SERVER, function(){
   //Callback triggered when server is successfully listening. Hurray!
-  console.log("Server listening on: http://localhost:%s", PORT);
+  console.log("Server listening on: http://localhost:%s", PORT_SERVER);
 });
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -92,10 +109,10 @@ app.on('activate', function () {
 
 ipc.on('invokeAction', function(event, data){
   request
-      .post('http://172.30.15.99:8080')
+      .post('http://172.30.15.99:'+PORT_SERVER)
       .send({ msg: data })
       .set('Accept', 'application/json')
       .end(function(err, res){
-        console.log(res.text);
+        //console.log(res.text);
       });
 });

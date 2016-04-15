@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "httpdispatcher": "^1.0.0",
+    "net": "^1.0.2",
     "superagent": "1.7.2"
   }
 }
