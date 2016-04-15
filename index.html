@@ -67,7 +67,7 @@
        var message = document.getElementById("send_message").value;
        ipc.send('invokeAction', message);
        document.getElementById("send_message").value='';
-       document.getElementById('chat').value+=+"Me: "+message+"\n";
+       document.getElementById('chat').value+="Me: "+message+"\n";
      });
      </script>
      <script>

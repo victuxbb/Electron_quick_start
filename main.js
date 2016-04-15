@@ -32,7 +32,7 @@ dispatcher.setStatic('resources');
 
 //A sample POST request
 dispatcher.onPost("/", function(req, res) {
-  mainWindow.webContents.send('msg',req.body);
+  mainWindow.webContents.send('msg',JSON.parse(req.body));
   res.end('Ok');
 
 });
